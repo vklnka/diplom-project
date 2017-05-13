@@ -57,7 +57,7 @@ def is_link_html_check(url):
 # проверяем на относительные ссылки и прочие
 def check_suitability_of_link(link, page_url):
     link_name = str(link.get('href'))
-    if link_name == "" or link_name.startswith("#"):  # избавляемся от меню и прочего начниаюшегося с #
+    if link_name == "": #or link_name.startswith("#"):  # избавляемся от меню и прочего начниаюшегося с #
         return False
     absolute_link = urljoin(page_url, link_name)
     link_pars = urlparse(absolute_link)
@@ -85,9 +85,9 @@ if __name__ == '__main__':
     page_list.extend(crawl_pages_started)
     for page in page_list:
         if page in visited_links:
-            pass
+            continue
         elif site not in page:
-            pass
+            continue
         elif page not in visited_links:
             crawl_pages_in_a_cycle = []
             crawl_pages_in_a_cycle, page_broken_links = crawl_pages_at_url(page, site)
