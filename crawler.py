@@ -32,6 +32,9 @@ def crawl_pages_at_url(page_url, site_url):
     soup = BeautifulSoup(r.text, 'html.parser')  # скармливаем обьект типа реквест и указываем .text что бы получить из него только текст, и указываем в качестве синтаксического анализатора (парсера) html.parser
     for link in soup.find_all('a'):  # магия указанная в типичном способе выдирания ссылок в бьютифол супе
         link_on_page = check_suitability_of_link(link, page_url)
+        print(link_on_page)
+        if not link_on_page:
+            continue
         if is_link_broken(link_on_page):
             broken_links.append(link_on_page)
         if is_link_html_check(link_on_page):
@@ -58,6 +61,8 @@ def check_suitability_of_link(link, page_url):
         return False
     absolute_link = urljoin(page_url, link_name)
     link_pars = urlparse(absolute_link)
+    absolute_link = absolute_link.split("#")
+    absolute_link = str(absolute_link[0])
     if link_pars.scheme == "tel" or link_pars.scheme == "mailto": #отсеиваем телефоны и емейлы
         return False
     else:
@@ -69,18 +74,15 @@ if __name__ == '__main__':
     external_links = []
     page_list = []
     broken_links = []
-    status_code = [200]
-
+    status_code = [200, 301, 302]
     if len(sys.argv) < 2:
         site = input_name_from_console()
     else:
         site = sys.argv[1]
-
     crawl_pages_started, broken = crawl_pages_at_url(site, site)
     broken_links += broken
     visited_links.append(site)  # добавляем к списку посещенных страниц что бы не ходить дважды на одну страницу
     page_list.extend(crawl_pages_started)
-
     for page in page_list:
         if page in visited_links:
             pass
